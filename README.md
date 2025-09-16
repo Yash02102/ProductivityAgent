@@ -1,4 +1,4 @@
-# TraceLink-ai
+# Productivity-ai
 
 
 
@@ -40,7 +40,7 @@ Extras: Structured logging, optional OpenTelemetry hooks
 
 
 
-# Tracelink AI
+# Productivity AI
 ## From Merge Request → Actionable Test Plan in minutes
 
 ### What it does (bridge):
