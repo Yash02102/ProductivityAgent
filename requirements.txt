@@ -1,0 +1,30 @@
+# Core framework
+fastapi
+uvicorn
+
+# HTTP clients
+httpx
+certifi
+
+# Data & validation
+pydantic
+pydantic-settings
+
+# Logging & telemetry
+structlog
+opentelemetry-api
+opentelemetry-sdk
+opentelemetry-instrumentation-fastapi
+opentelemetry-instrumentation-httpx
+opentelemetry-exporter-otlp
+
+# External services
+python-gitlab
+atlassian-python-api
+
+# LangChain ecosystem
+langgraph 
+langchain-openai 
+
+# Reliability
+tenacity
