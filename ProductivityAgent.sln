@@ -1,0 +1,29 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "language_parsers", "language_parsers", "{E3BA5A48-86B7-88C5-4046-86712D40B651}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpCodeParser", "language_parsers\csharp\CSharpCodeParser.csproj", "{8EA2667F-5D22-2ACE-F585-121717DDEB5C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8EA2667F-5D22-2ACE-F585-121717DDEB5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EA2667F-5D22-2ACE-F585-121717DDEB5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EA2667F-5D22-2ACE-F585-121717DDEB5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EA2667F-5D22-2ACE-F585-121717DDEB5C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8EA2667F-5D22-2ACE-F585-121717DDEB5C} = {E3BA5A48-86B7-88C5-4046-86712D40B651}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {97CA3CDE-0E96-4941-BCA8-C295FC116733}
+	EndGlobalSection
+EndGlobal

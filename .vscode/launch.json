@@ -1,0 +1,48 @@
+﻿{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: Full Agent",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/app/run_agent.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Python: FastAPI",
+      "type": "python",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": [
+        "app.api.main:app",
+        "--reload",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000"
+      ],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": ".NET: CSharpCodeParser",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/language_parsers/csharp/bin/Debug/net8.0/CSharpCodeParser.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/language_parsers/csharp",
+      "stopAtEntry": false,
+      "preLaunchTask": "build CSharpCodeParser"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Dev Suite (FastAPI + Parser)",
+      "configurations": [
+        "Python: FastAPI",
+        ".NET: CSharpCodeParser"
+      ]
+    }
+  ]
+}

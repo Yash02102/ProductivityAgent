@@ -85,29 +85,57 @@ def summarize_for_keywords(state: dict) -> dict:
 
 def _heuristic_keywords(diffs: list[dict], impacted: dict | None) -> list[str]:
     kws: set[str] = set()
-    for d in diffs:
-        for k in ("old_path", "new_path"):
-            p = d.get(k)
-            if not p: continue
-            fname = os.path.basename(p)
+
+    for diff in diffs:
+        for key in ("old_path", "new_path"):
+            file_path = diff.get(key)
+            if not file_path:
+                continue
+            fname = os.path.basename(file_path)
             base, ext = os.path.splitext(fname)
-            parts = re.findall(r"[A-Za-z]+", base)
-        for part in parts:
-            if 2 <= len(part) <= 40: kws.add(part.lower())
-        if ext:
-            e = ext.replace(".", "").lower()
-            if e: kws.add(e)
+            for part in re.findall(r"[A-Za-z]+", base):
+                if 2 <= len(part) <= 40:
+                    kws.add(part.lower())
+            if ext:
+                ext_token = ext.replace(".", "").lower()
+                if ext_token:
+                    kws.add(ext_token)
+
+    def _harvest_tokens(value: str | None):
+        if not value:
+            return
+        for part in re.findall(r"[A-Za-z]+", value):
+            if 2 <= len(part) <= 40:
+                kws.add(part.lower())
+
     if impacted:
-        for key in ("classes","methods","modules","packages","files"):
-            items = impacted.get(key)
-            if isinstance(items, list):
-                for it in items:
-                    if isinstance(it, str):
-                        tail = it.split(".")[-1]
-                    for part in re.findall(r"[A-Za-z]+", tail):
-                        if 2 <= len(part) <= 40: kws.add(part.lower())
+        files = impacted.get("files") or []
+        for entry in files:
+            if not isinstance(entry, dict):
+                continue
+            path_value = entry.get("path") or ""
+            if path_value:
+                base_name = os.path.splitext(os.path.basename(path_value))[0]
+                _harvest_tokens(base_name)
+            for block in entry.get("blocks") or []:
+                if not isinstance(block, dict):
+                    continue
+                _harvest_tokens(block.get("location"))
+                symbol = block.get("symbol") or {}
+                if isinstance(symbol, dict):
+                    _harvest_tokens(symbol.get("namespace"))
+                    _harvest_tokens(symbol.get("name"))
+                    for qualifier in symbol.get("qualifiers") or []:
+                        _harvest_tokens(str(qualifier))
+
+        summary = impacted.get("summary") or {}
+        for key in ("files", "namespaces", "containers", "symbols", "qualified_symbols"):
+            for item in summary.get(key) or []:
+                _harvest_tokens(str(item))
+
     stop = {"util","common","core","main","test","impl","service","manager"}
     return sorted([k for k in kws if k not in stop])[:50]
+
 
 def find_jira_tests(state: dict) -> dict:
     issue = state.get("jira_issue_details") or {}

@@ -1,8 +1,12 @@
 import uuid
+
 from fastapi import APIRouter
-from agent.graph import agent
-from api.schemas import AnalyzeRequest, AnalyzeResponse
+
+from app.agent.graph import agent
+from .schemas import AnalyzeRequest, AnalyzeResponse
+
 router = APIRouter()
+
 
 @router.post("/analyze", response_model=AnalyzeResponse)
 async def analyze(req: AnalyzeRequest):
@@ -13,4 +17,8 @@ async def analyze(req: AnalyzeRequest):
         "gitlab_mr_id": req.gitlab_mr_id,
         "messages": [],
     })
-    return AnalyzeResponse(request_id=request_id, status="completed", report_markdown=result.get("report_markdown"))
+    return AnalyzeResponse(
+        request_id=request_id,
+        status="completed",
+        report_markdown=result.get("report_markdown"),
+    )

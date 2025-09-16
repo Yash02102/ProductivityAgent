@@ -45,23 +45,54 @@ class LLMClient:
             return None
         
         structured_llm = self.llm.with_structured_output(FunctionalKeywordSummary)
-        
+
+        files = impacted_entities.get("files") or impacted_entities.get("impacted") or []
+
+        def _format_symbol_path(symbol: dict) -> str | None:
+            parts: list[str] = []
+            namespace = symbol.get("namespace")
+            if namespace:
+                parts.extend([p for p in str(namespace).split(".") if p])
+            for qualifier in symbol.get("qualifiers") or []:
+                parts.extend([p for p in str(qualifier).split(".") if p and p not in parts])
+            name = symbol.get("name") or symbol.get("display_name")
+            if name:
+                if not parts or parts[-1] != name:
+                    parts.append(str(name))
+            if parts:
+                return ".".join(parts)
+            return symbol.get("qualified_name") or symbol.get("display_name") or name
+
+        def _format_block(block: dict) -> dict:
+            symbol = block.get("symbol") or {}
+            return {
+                "location": block.get("location") or _format_symbol_path(symbol),
+                "kind": symbol.get("kind"),
+                "name": symbol.get("name"),
+                "namespace": symbol.get("namespace"),
+                "containers": symbol.get("qualifiers"),
+                "signature": symbol.get("signature"),
+                "span": block.get("span"),
+                "changed_lines": block.get("changed_lines"),
+                "code": block.get("snippet"),
+            }
+
         payload = {
-            "impacted": [
+            "files": [
                 {
-                    "path": d.get("file"),
-                    "enities":[
-                        {
-                            "type": entity.get("type"),
-                            "name": entity.get("name"),
-                            "code": entity.get("snippet"),
-                        }
-                        for entity in d.get("impacted")
-                    ]
+                    "path": f.get("path"),
+                    "language": f.get("language"),
+                    "change": f.get("change"),
+                    "blocks": [_format_block(b) for b in (f.get("blocks") or []) if b],
                 }
-                for d in impacted_entities.get("impacted")
+                for f in files
+                if f and f.get("blocks")
             ]
         }
+
+        summary = impacted_entities.get("summary")
+        if summary:
+            payload["summary"] = summary
         
         if jira_issue_details:
             js = (jira_issue_details.get("summary") or "")[:MAX_JIRA_SUMMARY_CHARS]
