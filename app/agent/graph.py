@@ -70,8 +70,6 @@ def get_issue_details(state: dict) -> dict:
         return {"jira_issue_details": {
                 "key": issue.get("key"),
                 "summary": fields.get("summary"),
-                "status": (fields.get("status") or {}).get("name"),
-                "assignee": (fields.get("assignee") or {}).get("displayName"),
                 "component": comp_name,
                 "project": (fields.get("project") or {}).get("key"),
                 "description": fields.get("description"),

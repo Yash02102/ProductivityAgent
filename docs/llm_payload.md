@@ -69,12 +69,27 @@ All fields are optional lists. The LLM can use them for quick keyword hints.
 
 ### `jira`
 
-Optional Jira context included when `jira_issue_details` is available:
+Optional Jira context included when `jira_issue_details` is available. Values are sanitized with `_jira_plain_text()` and empty entries are dropped. `summary` is clipped to `MAX_JIRA_SUMMARY_CHARS`, while any field whose key contains `description` is clipped to `MAX_JIRA_DESC_CHARS`.
 
-| Field         | Source                                     | Truncation |
-|---------------|--------------------------------------------|------------|
-| `summary`     | `issue.fields.summary`                     | Clipped to 300 chars |
-| `description` | Rich text cleaned via `_jira_plain_text()` | Clipped to 1,200 chars |
+Example payload:
+
+```jsonc
+"jira": {
+  "key": "ABC-123",
+  "summary": "Short issue summary",
+  "component": "Payments",
+  "project": "TRACK",
+  "releaseTarget": "FY25 W30",
+  "description": "Plain text body...",
+  "hierarchy": {
+    "Epic": {
+      "id": "TRACK-42",
+      "summary": "Epic headline",
+      "description": "Shortened description..."
+    }
+  }
+}
+```
 
 Formatting removes Atlassian macros, `{code}` blocks, and Jira link markup.
 

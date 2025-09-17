@@ -1,6 +1,6 @@
 from __future__ import annotations
 import json
-from typing import Optional
+from typing import Optional, Any
 import certifi
 import httpx
 from langchain_openai import ChatOpenAI
@@ -27,6 +27,56 @@ def _jira_plain_text(s: str) -> str:
     s = re.sub(r"\s+", " ", s).strip()
     return s
 
+
+
+def _clip_text(value: str, limit: int) -> str:
+    if not value:
+        return ""
+    if limit and limit > 0 and len(value) > limit:
+        return value[:limit].strip()
+    return value
+
+
+def _sanitize_jira_value(key: str, value: Any):
+    if value is None:
+        return None
+    if isinstance(value, str):
+        text_value = _jira_plain_text(value)
+        if not text_value:
+            return None
+        lower_key = (key or "").lower()
+        if lower_key == "summary":
+            text_value = _clip_text(text_value, MAX_JIRA_SUMMARY_CHARS)
+        elif "description" in lower_key:
+            text_value = _clip_text(text_value, MAX_JIRA_DESC_CHARS)
+        return text_value
+    if isinstance(value, dict):
+        cleaned: dict[str, Any] = {}
+        for sub_key, sub_value in value.items():
+            sanitized = _sanitize_jira_value(str(sub_key), sub_value)
+            if sanitized not in (None, "", [], {}):
+                cleaned[sub_key] = sanitized
+        return cleaned or None
+    if isinstance(value, (list, tuple, set)):
+        cleaned_list = []
+        for item in value:
+            sanitized = _sanitize_jira_value(key, item)
+            if sanitized not in (None, "", [], {}):
+                cleaned_list.append(sanitized)
+        return cleaned_list or None
+    return value
+
+
+def _build_jira_payload(details: dict[str, Any]) -> dict[str, Any]:
+    if not details:
+        return {}
+    cleaned: dict[str, Any] = {}
+    for key, value in details.items():
+        sanitized = _sanitize_jira_value(str(key), value)
+        if sanitized not in (None, "", [], {}):
+            cleaned[key] = sanitized
+    return cleaned
+
 class LLMClient:
     def __init__(self) -> None:
         self.enabled = bool(settings.LLM_BASE_URL and settings.LLM_API_KEY)
@@ -40,7 +90,7 @@ class LLMClient:
             )
 
 
-    def extract_keywords(self, impacted_entities: dict, jira_issue_details: dict) -> FunctionalKeywordSummary:
+    def extract_keywords(self, impacted_entities: dict, jira_issue_details: dict) -> Optional[FunctionalKeywordSummary]:
         if not self.enabled:
             return None
         
@@ -94,14 +144,9 @@ class LLMClient:
         if summary:
             payload["summary"] = summary
         
-        if jira_issue_details:
-            js = (jira_issue_details.get("summary") or "")[:MAX_JIRA_SUMMARY_CHARS]
-            jd = (jira_issue_details.get("description") or "")
-            jd = _jira_plain_text(jd)[:MAX_JIRA_DESC_CHARS]
-            payload["jira"] = {
-                "summary": js,
-                "description": jd,
-            }
+        jira_payload = _build_jira_payload(jira_issue_details or {})
+        if jira_payload:
+            payload["jira"] = jira_payload
 
         messages = [
             SystemMessage(content=extract_functional_prompt),
