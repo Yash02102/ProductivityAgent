@@ -2,7 +2,7 @@ from __future__ import annotations
 import gitlab
 # from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 from httpx import HTTPError
-from config import settings
+from app.config import settings
 
 
 class GitLabClient:

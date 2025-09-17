@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Optional, Iterable, Dict, Any
 from atlassian import Jira
-from config import settings
+from app.config import settings
 
 TEST_PLAN_ISSUE_TYPE = "Test Plan"
 

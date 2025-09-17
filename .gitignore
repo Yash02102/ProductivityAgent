@@ -9,7 +9,7 @@ __pycache__/
 *$py.class
 
 # VS Code settings
-.vscode/
+# .vscode/
 
 # OS files
 .DS_Store
@@ -23,3 +23,9 @@ Thumbs.db
 
 # Environment variable files
 .env
+# .NET build artifacts
+language_parsers/**/bin/
+language_parsers/**/obj/
+*.user
+*.suo
+
