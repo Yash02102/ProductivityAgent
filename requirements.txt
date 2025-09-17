@@ -28,3 +28,6 @@ langchain-openai
 
 # Reliability
 tenacity
+
+# parsing html
+beautifulsoup4

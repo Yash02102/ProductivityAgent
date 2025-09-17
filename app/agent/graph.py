@@ -1,5 +1,6 @@
 import os
 import re
+from bs4 import BeautifulSoup
 from langgraph.graph import StateGraph, START, END
 from app.agent.state import AgentState
 from app.agent.jira_comment import build_jira_comment
@@ -38,9 +39,34 @@ def get_issue_details(state: dict) -> dict:
     try:
         issue = _jira.get_issue(state["jira_key"]) or {}
         fields = issue.get("fields", {})
+        
+        soup = BeautifulSoup(fields.get("customfield_10902"), 'html.parser')
+        table = soup.find('table', id='hvcHierarchy')
+        hierarchy = {}
+        for row in table.find_all('tr'):
+            columns = row.find_all('td')
+            if len(columns) >= 3:
+                category = columns[0].text
+                id_text = columns[1].find('a').text
+                description = columns[2].text
+                hierarchy[category] = {
+                    'id': id_text,
+                    'description': description
+                }
+        
         comps = fields.get("components") or []
         release_target = fields.get("customfield_10220").get("value")
         comp_name = comps[0]["name"] if comps else None
+        
+        epic = hierarchy.get("Epic")
+        if epic:
+            epic_id = epic.get("id")
+            if epic_id:
+                epic_issue = _jira.get_issue(epic_id) or {}
+                epic_fields = epic_issue.get("fields", {}) or {}
+                hierarchy["Epic"]["summary"] = epic_fields.get("summary")
+                hierarchy["Epic"]["description"] = epic_fields.get("description")
+        
         return {"jira_issue_details": {
                 "key": issue.get("key"),
                 "summary": fields.get("summary"),
@@ -49,7 +75,8 @@ def get_issue_details(state: dict) -> dict:
                 "component": comp_name,
                 "project": (fields.get("project") or {}).get("key"),
                 "description": fields.get("description"),
-                "releaseTarget": f"{release_target[:4]} {release_target[-4:]}"
+                "releaseTarget": f"{release_target[:4]} {release_target[-4:]}",
+                "hierarchy": {"Epic": hierarchy.get("Epic", {})}
             }
         }
     except Exception as e:
