@@ -20,5 +20,5 @@ async def analyze(req: AnalyzeRequest):
     return AnalyzeResponse(
         request_id=request_id,
         status="completed",
-        report_markdown=result.get("report_markdown"),
+        analysis=result.get("jira_comment_body"),
     )

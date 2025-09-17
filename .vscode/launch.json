@@ -1,9 +1,9 @@
-﻿{
+{
   "version": "0.2.0",
   "configurations": [
     {
       "name": "Python: Full Agent",
-      "type": "python",
+      "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}/app/run_agent.py",
       "console": "integratedTerminal",
@@ -11,14 +11,14 @@
     },
     {
       "name": "Python: FastAPI",
-      "type": "python",
+      "type": "debugpy",
       "request": "launch",
       "module": "uvicorn",
       "args": [
         "app.api.main:app",
         "--reload",
         "--host",
-        "0.0.0.0",
+        "127.0.0.1",
         "--port",
         "8000"
       ],

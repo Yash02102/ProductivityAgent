@@ -169,8 +169,8 @@ def build_jira_comment(state: dict) -> str:
     mr_url = state.get('mr_web_url')
     jira_key = state.get('jira_key', '?')
     test_plan = state.get('test_plan')
-    test_plan_key = test_plan.get('key')
-    test_plan_sum = test_plan.get('summary')
+    test_plan_key = test_plan.get('key') if test_plan else None
+    test_plan_sum = test_plan.get('summary') if test_plan else None
 
     mr_ref = f"[Merge Request - {mr_id}|{mr_url}]" if mr_url else f"MR {mr_id}"
     plan_line = f"*Test Plan:* {test_plan_key}" + (f" — {test_plan_sum}" if test_plan_sum else "") if test_plan_key else "*Test Plan:* _not set_"

@@ -1,7 +1,7 @@
 from typing import Optional
 from langgraph.graph import MessagesState
 
-from schemas.functional_category import FunctionalCategory
+from app.schemas.functional_category import FunctionalCategory
 
 
 class AgentState(MessagesState):
@@ -21,7 +21,7 @@ class AgentState(MessagesState):
     summary: Optional[str] = None
     functional_categories: FunctionalCategory
 
-
+    map_test_to_plan: bool = False
     jira_tests: Optional[list[dict]] = None
     jira_tests_by_category: dict[str, dict] = {}
     test_plan: dict

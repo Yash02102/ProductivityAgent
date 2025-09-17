@@ -4,7 +4,7 @@ import json
 import subprocess
 from typing import Any
 
-from config import settings
+from app.config import settings
 
 
 def analyze_cs_file_with_roslyn(content: str) -> dict[str, Any]:

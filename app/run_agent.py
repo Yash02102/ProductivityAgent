@@ -1,10 +1,8 @@
-from agent.graph import agent
-from clients.jira_client import JiraClient
+from app.agent.graph import agent
+
+#Example runs on the agent
 
 if __name__ == "__main__":
-    
-    # JiraClient().ensure_test_plan("QSE", "DSA_Quote_Shipping_and_Estimates", "FY25FW20-0603")
-    # JiraClient().link_tests_to_plan("QSE-5502", ["QSE-894","QSE-893"])
     
     res = agent.invoke({
         "jira_key": "MAV-269293",

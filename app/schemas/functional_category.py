@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from schemas.impact_keyword import ImpactKeyword
+from app.schemas.impact_keyword import ImpactKeyword
 
 
 

@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 from typing import Any, Iterable
 
-from services.code_analyzer.cs_code_analyzer import analyze_cs_file_with_roslyn
+from app.services.code_analyzer.cs_code_analyzer import analyze_cs_file_with_roslyn
 
 
 class ImpactAnalyzer:

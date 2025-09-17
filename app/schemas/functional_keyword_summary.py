@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from schemas.functional_category import FunctionalCategory
+from app.schemas.functional_category import FunctionalCategory
 
 class FunctionalKeywordSummary(BaseModel):
     categories: list[FunctionalCategory] = Field(default_factory=list)

@@ -4,9 +4,9 @@ from typing import Optional
 import certifi
 import httpx
 from langchain_openai import ChatOpenAI
-from schemas.functional_keyword_summary import FunctionalKeywordSummary
-from config import settings
-from utils.prompts import extract_functional_prompt
+from app.schemas.functional_keyword_summary import FunctionalKeywordSummary
+from app.config import settings
+from app.utils.prompts import extract_functional_prompt
 from langchain_core.messages import SystemMessage, HumanMessage
 
 import re
